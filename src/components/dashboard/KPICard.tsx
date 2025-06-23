@@ -17,7 +17,6 @@ const KPICard: React.FC<KPICardProps> = ({ title, value, trend, trendType, trend
   const finalTrendType = trendType || (trendDirection === 'up' ? 'positive' : trendDirection === 'down' ? 'negative' : 'neutral');
   
   const trendColors = {
-    percentage: parseFloat(value.replace('%', '')),
     positive: 'text-green-400',
     negative: 'text-red-400',
     neutral: 'text-slate-400'
@@ -29,24 +28,24 @@ const KPICard: React.FC<KPICardProps> = ({ title, value, trend, trendType, trend
   // Create semicircular gauge for Labor Utilization
   const createGaugeSegments = () => {
     const segments = [];
-    const totalSegments = 20;
+    const totalSegments = 30;
     const filledSegments = Math.floor((percentage / 100) * totalSegments);
     
     for (let i = 0; i < totalSegments; i++) {
       const angle = (i / (totalSegments - 1)) * 180 - 90; // -90 to 90 degrees
       const isFilled = i < filledSegments;
-      let color = '#374151'; // gray-700 default
+      let color = '#475569'; // slate-600 default (contrasting background)
       
       if (isFilled) {
-        if (i < totalSegments * 0.6) color = '#ef4444'; // red
-        else if (i < totalSegments * 0.8) color = '#f59e0b'; // yellow
-        else color = '#10b981'; // green
+        if (i < totalSegments * 0.6) color = '#dc2626'; // red-600
+        else if (i < totalSegments * 0.8) color = '#ea580c'; // orange-600
+        else color = '#16a34a'; // green-600
       }
       
       segments.push(
         <div
           key={i}
-          className="absolute w-1 h-3 origin-bottom"
+          className="absolute w-1.5 h-6 origin-bottom rounded-sm"
           style={{
             left: '50%',
             bottom: '50%',
@@ -59,6 +58,48 @@ const KPICard: React.FC<KPICardProps> = ({ title, value, trend, trendType, trend
     return segments;
   };
 
+  if (isLaborUtilization) {
+    return (
+      <Card className="bg-slate-800 border-slate-700 hover:bg-slate-750 hover:shadow-lg hover:scale-[1.02] transition-all duration-200 cursor-pointer">
+        <CardContent className="p-6">
+          <div className="space-y-4">
+            <p className="text-sm font-medium text-slate-400">{title}</p>
+            
+            {/* Large semicircular gauge */}
+            <div className="flex flex-col items-center space-y-4">
+              {/* Percentage value above gauge */}
+              <div className="text-3xl font-bold text-white">{value}</div>
+              
+              {/* Gauge container */}
+              <div className="relative w-32 h-16">
+                {createGaugeSegments()}
+                {/* Needle indicator */}
+                <div 
+                  className="absolute w-1 h-8 bg-white origin-bottom rounded-sm shadow-lg"
+                  style={{
+                    left: '50%',
+                    bottom: '50%',
+                    transform: `translateX(-50%) rotate(${(percentage / 100) * 180 - 90}deg)`,
+                  }}
+                />
+                {/* Center dot */}
+                <div className="absolute w-2 h-2 bg-white rounded-full" style={{
+                  left: '50%',
+                  bottom: '50%',
+                  transform: 'translateX(-50%) translateY(50%)'
+                }} />
+              </div>
+            </div>
+            
+            <p className={`text-sm font-medium ${trendColors[finalTrendType]} text-center`}>
+              {trend}
+            </p>
+          </div>
+        </CardContent>
+      </Card>
+    );
+  }
+
   return (
     <Card className="bg-slate-800 border-slate-700 hover:bg-slate-750 hover:shadow-lg hover:scale-[1.02] transition-all duration-200 cursor-pointer">
       <CardContent className="p-6">
@@ -69,19 +110,6 @@ const KPICard: React.FC<KPICardProps> = ({ title, value, trend, trendType, trend
               <p className="text-2xl font-bold text-white">{value}</p>
               {unit && <p className="text-sm text-slate-400">{unit}</p>}
             </div>
-            {isLaborUtilization && (
-              <div className="relative w-16 h-8">
-                {createGaugeSegments()}
-                <div 
-                  className="absolute w-1 h-4 bg-slate-300 origin-bottom"
-                  style={{
-                    left: '50%',
-                    bottom: '50%',
-                    transform: `translateX(-50%) rotate(${(percentage / 100) * 180 - 90}deg)`,
-                  }}
-                />
-              </div>
-            )}
           </div>
           <p className={`text-sm font-medium ${trendColors[finalTrendType]}`}>
             {trend}
