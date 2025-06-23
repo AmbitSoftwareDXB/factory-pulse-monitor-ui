@@ -28,7 +28,7 @@ const KPICard: React.FC<KPICardProps> = ({ title, value, trend, trendType, trend
   // Create semicircular gauge for Labor Utilization
   const createGaugeSegments = () => {
     const segments = [];
-    const totalSegments = 30;
+    const totalSegments = 20;
     const filledSegments = Math.floor((percentage / 100) * totalSegments);
     
     for (let i = 0; i < totalSegments; i++) {
@@ -45,7 +45,7 @@ const KPICard: React.FC<KPICardProps> = ({ title, value, trend, trendType, trend
       segments.push(
         <div
           key={i}
-          className="absolute w-1.5 h-6 origin-bottom rounded-sm"
+          className="absolute w-1 h-4 origin-bottom rounded-sm"
           style={{
             left: '50%',
             bottom: '50%',
@@ -62,20 +62,18 @@ const KPICard: React.FC<KPICardProps> = ({ title, value, trend, trendType, trend
     return (
       <Card className="bg-slate-800 border-slate-700 hover:bg-slate-750 hover:shadow-lg hover:scale-[1.02] transition-all duration-200 cursor-pointer">
         <CardContent className="p-6">
-          <div className="space-y-4">
+          <div className="space-y-2">
             <p className="text-sm font-medium text-slate-400">{title}</p>
             
-            {/* Large semicircular gauge */}
-            <div className="flex flex-col items-center space-y-4">
-              {/* Percentage value above gauge */}
-              <div className="text-3xl font-bold text-white">{value}</div>
+            <div className="flex items-center justify-between">
+              <div className="text-2xl font-bold text-white">{value}</div>
               
-              {/* Gauge container */}
-              <div className="relative w-32 h-16">
+              {/* Compact gauge on the right */}
+              <div className="relative w-16 h-8 flex-shrink-0">
                 {createGaugeSegments()}
                 {/* Needle indicator */}
                 <div 
-                  className="absolute w-1 h-8 bg-white origin-bottom rounded-sm shadow-lg"
+                  className="absolute w-0.5 h-6 bg-white origin-bottom rounded-sm shadow-lg"
                   style={{
                     left: '50%',
                     bottom: '50%',
@@ -83,7 +81,7 @@ const KPICard: React.FC<KPICardProps> = ({ title, value, trend, trendType, trend
                   }}
                 />
                 {/* Center dot */}
-                <div className="absolute w-2 h-2 bg-white rounded-full" style={{
+                <div className="absolute w-1 h-1 bg-white rounded-full" style={{
                   left: '50%',
                   bottom: '50%',
                   transform: 'translateX(-50%) translateY(50%)'
@@ -91,7 +89,7 @@ const KPICard: React.FC<KPICardProps> = ({ title, value, trend, trendType, trend
               </div>
             </div>
             
-            <p className={`text-sm font-medium ${trendColors[finalTrendType]} text-center`}>
+            <p className={`text-sm font-medium ${trendColors[finalTrendType]}`}>
               {trend}
             </p>
           </div>
