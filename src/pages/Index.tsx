@@ -60,7 +60,7 @@ const Index = () => {
           <h2 className="text-xl font-bold text-white mb-4">Factory Floor Overview</h2>
           <div className="relative">
             <img 
-              src="/lovable-uploads/643dfa10-7c57-4617-8a5f-27b53c32c9a9.png"
+              src="/lovable-uploads/4a2070c3-c5b3-45a0-b1fb-01e92110975e.png"
               alt="Factory Floor 3D Visualization"
               className="w-full h-auto rounded-lg"
             />
