@@ -5,7 +5,8 @@ interface KPIData {
   title: string;
   value: string;
   trend: string;
-  trendType: 'positive' | 'negative' | 'neutral';
+  trendType?: 'positive' | 'negative' | 'neutral';
+  trendDirection?: 'up' | 'down';
   unit?: string;
 }
 
@@ -41,10 +42,9 @@ export const useDashboardData = () => {
     },
     {
       title: 'Labor Utilization',
-      value: '87.5',
-      trend: '+1.3%',
-      trendType: 'positive',
-      unit: '%'
+      value: '72.4%',
+      trend: '+3%',
+      trendDirection: 'up'
     },
     {
       title: 'Energy Usage',
@@ -77,15 +77,22 @@ export const useDashboardData = () => {
       setKpiData(prevData => 
         prevData.map(item => {
           // Simulate small random changes
-          const currentValue = parseFloat(item.value.replace(',', ''));
+          const currentValue = parseFloat(item.value.replace(/[,%]/g, ''));
           const variation = (Math.random() - 0.5) * 0.1; // ±5% variation
           const newValue = Math.max(0, currentValue * (1 + variation));
           
+          let formattedValue;
+          if (item.unit === 'units' || item.unit === 'units/hr') {
+            formattedValue = Math.floor(newValue).toLocaleString();
+          } else if (item.title === 'Labor Utilization') {
+            formattedValue = `${newValue.toFixed(1)}%`;
+          } else {
+            formattedValue = newValue.toFixed(1);
+          }
+          
           return {
             ...item,
-            value: item.unit === 'units' || item.unit === 'units/hr' 
-              ? Math.floor(newValue).toLocaleString()
-              : newValue.toFixed(1)
+            value: formattedValue
           };
         })
       );
