@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 
@@ -27,11 +28,11 @@ const Navigation = () => {
         </div>
         <div className="flex items-center space-x-4">
           <div className="text-sm text-slate-300">
-            John Smith
+            Vivek Valsang
           </div>
           <Avatar className="h-8 w-8">
             <AvatarImage src="" />
-            <AvatarFallback className="bg-blue-600 text-white text-xs">JS</AvatarFallback>
+            <AvatarFallback className="bg-blue-600 text-white text-xs">VV</AvatarFallback>
           </Avatar>
         </div>
       </div>
