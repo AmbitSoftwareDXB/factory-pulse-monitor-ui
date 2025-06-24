@@ -60,10 +60,10 @@ const KPICard: React.FC<KPICardProps> = ({ title, value, trend, trendType, trend
 
   if (isLaborUtilization) {
     return (
-      <Card className="bg-slate-800 border-slate-700 hover:bg-slate-750 hover:shadow-lg hover:scale-[1.02] transition-all duration-200 cursor-pointer">
-        <CardContent className="p-6">
-          <div className="space-y-2">
-            <p className="text-sm font-medium text-slate-400">{title}</p>
+      <Card className="bg-slate-800 border-slate-700 hover:bg-slate-750 hover:shadow-lg hover:scale-[1.02] transition-all duration-200 cursor-pointer h-full">
+        <CardContent className="p-6 h-full flex flex-col">
+          <div className="space-y-2 flex-1">
+            <p className="text-base font-medium text-slate-400">{title}</p>
             
             <div className="flex items-center justify-between">
               <div className="text-2xl font-bold text-white">{value}</div>
@@ -99,10 +99,10 @@ const KPICard: React.FC<KPICardProps> = ({ title, value, trend, trendType, trend
   }
 
   return (
-    <Card className="bg-slate-800 border-slate-700 hover:bg-slate-750 hover:shadow-lg hover:scale-[1.02] transition-all duration-200 cursor-pointer">
-      <CardContent className="p-6">
-        <div className="space-y-2">
-          <p className="text-sm font-medium text-slate-400">{title}</p>
+    <Card className="bg-slate-800 border-slate-700 hover:bg-slate-750 hover:shadow-lg hover:scale-[1.02] transition-all duration-200 cursor-pointer h-full">
+      <CardContent className="p-6 h-full flex flex-col">
+        <div className="space-y-2 flex-1">
+          <p className="text-base font-medium text-slate-400">{title}</p>
           <div className="flex items-baseline justify-between">
             <div className="flex items-baseline space-x-2">
               <p className="text-2xl font-bold text-white">{value}</p>

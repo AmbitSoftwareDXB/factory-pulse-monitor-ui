@@ -84,6 +84,9 @@ export const useDashboardData = () => {
           let formattedValue;
           if (item.unit === 'units' || item.unit === 'units/hr') {
             formattedValue = Math.floor(newValue).toLocaleString();
+          } else if (item.title === 'Active Alarms') {
+            // Ensure Active Alarms is always a whole number
+            formattedValue = Math.floor(newValue).toString();
           } else if (item.title === 'Labor Utilization') {
             formattedValue = `${newValue.toFixed(1)}%`;
           } else {

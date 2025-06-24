@@ -32,6 +32,8 @@ const Index = () => {
                 className={`rounded-full ${
                   activeFilter === option 
                     ? 'bg-blue-600 hover:bg-blue-700 text-white' 
+                    : option === 'Last 7 Days' || option === 'Last 30 Days'
+                    ? 'bg-gray-600 hover:bg-gray-700 text-white border-gray-600'
                     : 'border-slate-600 text-slate-300 hover:bg-slate-800'
                 }`}
               >
