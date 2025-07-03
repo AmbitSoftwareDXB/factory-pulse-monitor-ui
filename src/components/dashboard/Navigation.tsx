@@ -16,8 +16,13 @@ const Navigation = () => {
     <nav className="sticky top-0 z-50 bg-slate-900/95 backdrop-blur-sm border-b border-slate-700">
       <div className="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
         <div className="flex items-center space-x-8">
-          <Link to="/" className="text-xl font-bold text-white hover:text-blue-400 transition-colors">
-            Digital Twin Monitor
+          <Link to="/" className="flex items-center space-x-2 text-xl font-bold text-white hover:text-blue-400 transition-colors">
+            <img 
+              src="/lovable-uploads/040dcaec-ee9e-42b9-a3f0-5f1475f922ff.png" 
+              alt="Digital Twin Monitor Logo" 
+              className="h-8 w-8 dark:brightness-100 brightness-0 dark:invert-0 invert"
+            />
+            <span>Digital Twin Monitor</span>
           </Link>
           <div className="hidden md:flex space-x-6">
             {navItems.map((item) => (
