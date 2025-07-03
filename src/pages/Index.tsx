@@ -5,6 +5,7 @@ import KPICard from '@/components/dashboard/KPICard';
 import MachineStatus from '@/components/dashboard/MachineStatus';
 import AlarmsTable from '@/components/dashboard/AlarmsTable';
 import AnalyticsCards from '@/components/dashboard/AnalyticsCards';
+import FactoryFloorVisualization from '@/components/dashboard/FactoryFloorVisualization';
 import { useDashboardData } from '@/hooks/useDashboardData';
 import { Button } from '@/components/ui/button';
 
@@ -60,17 +61,7 @@ const Index = () => {
         {/* Factory Floor Visualization */}
         <div className="bg-slate-800 border border-slate-700 rounded-lg p-6">
           <h2 className="text-xl font-bold text-white mb-4">Factory Floor Overview</h2>
-          <div className="relative">
-            <img 
-              src="/lovable-uploads/1bf7ef2a-98ac-4641-a6bc-ec0436837364.png"
-              alt="Factory Floor 3D Visualization"
-              className="w-full h-auto rounded-lg"
-            />
-            <div className="absolute top-4 left-4 bg-slate-900/80 backdrop-blur-sm rounded-lg p-3">
-              <p className="text-sm text-white font-medium">Live Factory Status</p>
-              <p className="text-xs text-green-400">All systems operational</p>
-            </div>
-          </div>
+          <FactoryFloorVisualization />
         </div>
 
         {/* Machine Diagnostics */}
