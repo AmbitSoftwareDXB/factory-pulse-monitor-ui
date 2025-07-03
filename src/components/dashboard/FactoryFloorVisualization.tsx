@@ -34,8 +34,8 @@ const hazardData: HazardIcon[] = [
     severity: 'Medium',
     location: 'Quality Control - Inspection Area',
     timestamp: '2024-01-15 14:15:00',
-    x: 70,
-    y: 30
+    x: 65,
+    y: 35
   },
   {
     id: '3',
@@ -45,8 +45,8 @@ const hazardData: HazardIcon[] = [
     severity: 'High',
     location: 'Main Distribution Panel',
     timestamp: '2024-01-15 14:18:00',
-    x: 15,
-    y: 25
+    x: 25,
+    y: 35
   },
   {
     id: '4',
@@ -56,19 +56,8 @@ const hazardData: HazardIcon[] = [
     severity: 'Low',
     location: 'Assembly Line 1 - Conveyor System',
     timestamp: '2024-01-15 14:10:00',
-    x: 55,
-    y: 60
-  },
-  {
-    id: '5',
-    type: 'warning',
-    title: 'Vibration Alert',
-    description: 'Abnormal vibration patterns detected',
-    severity: 'Medium',
-    location: 'Packaging Area - Sealing Unit',
-    timestamp: '2024-01-15 14:20:00',
-    x: 80,
-    y: 70
+    x: 50,
+    y: 55
   }
 ];
 
