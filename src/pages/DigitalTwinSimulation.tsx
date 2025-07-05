@@ -75,6 +75,8 @@ const DigitalTwinSimulation = () => {
   const [isSimulating, setIsSimulating] = useState(false);
   const [simulationSpeed, setSimulationSpeed] = useState([1]);
   const [scenarioName, setScenarioName] = useState('Production Line Optimization');
+  const [isInteractiveMode, setIsInteractiveMode] = useState(false);
+  const [selectedNode, setSelectedNode] = useState<any>(null);
   
   const initialNodes: Node[] = [
     {
@@ -192,6 +194,12 @@ const DigitalTwinSimulation = () => {
     (params: Connection) => setEdges((eds) => addEdge(params, eds)),
     [setEdges],
   );
+
+  const onNodeClick = useCallback((event: React.MouseEvent, node: Node) => {
+    if (isInteractiveMode) {
+      setSelectedNode(node);
+    }
+  }, [isInteractiveMode]);
 
   const scenarios = [
     {
@@ -393,10 +401,21 @@ const DigitalTwinSimulation = () => {
                 <CardHeader>
                   <div className="flex items-center justify-between">
                     <CardTitle className="text-white">Process Flow Simulation</CardTitle>
-                    <div className="flex items-center gap-2">
-                      <Settings className="w-4 h-4 text-slate-400" />
-                      <span className="text-slate-400 text-sm">Interactive Mode</span>
-                    </div>
+                    <Button
+                      variant={isInteractiveMode ? "default" : "outline"}
+                      size="sm"
+                      onClick={() => setIsInteractiveMode(!isInteractiveMode)}
+                      className={`flex items-center gap-2 ${
+                        isInteractiveMode 
+                          ? 'bg-blue-600 hover:bg-blue-700 text-white' 
+                          : 'border-slate-600 text-slate-300 hover:bg-slate-700'
+                      }`}
+                    >
+                      <Settings className="w-4 h-4" />
+                      <span className="text-sm">
+                        Interactive Mode {isInteractiveMode ? 'ON' : 'OFF'}
+                      </span>
+                    </Button>
                   </div>
                 </CardHeader>
                 <CardContent className="p-0 h-[600px]">
@@ -406,6 +425,7 @@ const DigitalTwinSimulation = () => {
                     onNodesChange={onNodesChange}
                     onEdgesChange={onEdgesChange}
                     onConnect={onConnect}
+                    onNodeClick={onNodeClick}
                     nodeTypes={nodeTypes}
                     fitView
                     className="bg-slate-50"
@@ -427,6 +447,66 @@ const DigitalTwinSimulation = () => {
               </Card>
             </div>
           </div>
+
+          {/* Optimization Recommendations */}
+          {isInteractiveMode && selectedNode && (
+            <Card className="bg-slate-800 border-slate-700">
+              <CardHeader>
+                <div className="flex items-center justify-between">
+                  <CardTitle className="text-white">
+                    Node Details: {selectedNode.data.label}
+                  </CardTitle>
+                  <Button
+                    variant="ghost"
+                    size="sm" 
+                    onClick={() => setSelectedNode(null)}
+                    className="text-slate-400 hover:text-white"
+                  >
+                    ✕
+                  </Button>
+                </div>
+              </CardHeader>
+              <CardContent>
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                  <div className="bg-slate-700 p-3 rounded">
+                    <div className="text-slate-400 text-xs">Node Type</div>
+                    <div className="text-white text-lg font-bold capitalize">{selectedNode.type}</div>
+                  </div>
+                  <div className="bg-slate-700 p-3 rounded">
+                    <div className="text-slate-400 text-xs">Status</div>
+                    <div className="text-white text-lg font-bold">{selectedNode.data.status || 'Active'}</div>
+                  </div>
+                  {selectedNode.data.throughput && (
+                    <div className="bg-slate-700 p-3 rounded">
+                      <div className="text-slate-400 text-xs">Throughput</div>
+                      <div className="text-white text-lg font-bold">{selectedNode.data.throughput}/hr</div>
+                    </div>
+                  )}
+                  {selectedNode.data.efficiency && (
+                    <div className="bg-slate-700 p-3 rounded">
+                      <div className="text-slate-400 text-xs">Efficiency</div>
+                      <div className="text-white text-lg font-bold">{selectedNode.data.efficiency}%</div>
+                    </div>
+                  )}
+                  {selectedNode.data.current !== undefined && (
+                    <div className="bg-slate-700 p-3 rounded">
+                      <div className="text-slate-400 text-xs">Current Load</div>
+                      <div className="text-white text-lg font-bold">{selectedNode.data.current}</div>
+                    </div>
+                  )}
+                  {selectedNode.data.max && (
+                    <div className="bg-slate-700 p-3 rounded">
+                      <div className="text-slate-400 text-xs">Max Capacity</div>
+                      <div className="text-white text-lg font-bold">{selectedNode.data.max}</div>
+                    </div>
+                  )}
+                </div>
+                <div className="mt-4 text-slate-300 text-sm">
+                  <strong>Interactive Mode:</strong> Click on different nodes in the diagram to inspect their real-time data and performance metrics.
+                </div>
+              </CardContent>
+            </Card>
+          )}
 
           {/* Optimization Recommendations */}
           <Card className="bg-slate-800 border-slate-700">
