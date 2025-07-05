@@ -10,7 +10,6 @@ import Alarms from "./pages/Alarms";
 import Reports from "./pages/Reports";
 import NotFound from "./pages/NotFound";
 import Equipment3D from "./pages/Equipment3D";
-import AnomalyDetection from "./pages/AnomalyDetection";
 import WorkInstructions from "./pages/WorkInstructions";
 import DigitalTwinSimulation from "./pages/DigitalTwinSimulation";
 
@@ -28,7 +27,6 @@ const App = () => (
           <Route path="/alarms" element={<Alarms />} />
           <Route path="/reports" element={<Reports />} />
           <Route path="/equipment-3d" element={<Equipment3D />} />
-          <Route path="/anomaly-detection" element={<AnomalyDetection />} />
           <Route path="/work-instructions" element={<WorkInstructions />} />
           <Route path="/digital-twin" element={<DigitalTwinSimulation />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
