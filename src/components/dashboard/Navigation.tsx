@@ -9,7 +9,11 @@ const Navigation = () => {
     { name: 'Overview', path: '/' },
     { name: 'Machines', path: '/machines' },
     { name: 'Alarms', path: '/alarms' },
-    { name: 'Reports', path: '/reports' }
+    { name: 'Reports', path: '/reports' },
+    { name: '3D Equipment', path: '/equipment-3d' },
+    { name: 'AI Anomaly', path: '/anomaly-detection' },
+    { name: 'Work Instructions', path: '/work-instructions' },
+    { name: 'Digital Twin', path: '/digital-twin' }
   ];
   
   return (
