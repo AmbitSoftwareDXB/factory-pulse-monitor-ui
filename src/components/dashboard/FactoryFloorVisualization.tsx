@@ -21,10 +21,10 @@ const hazardData: HazardIcon[] = [
     title: 'Hydraulic System Failure',
     description: 'Main hydraulic pump showing critical pressure drop',
     severity: 'Critical',
-    location: 'Assembly Line 2 - Press Station',
+    location: 'Processing Unit - Main Equipment',
     timestamp: '2024-01-15 14:23:00',
-    x: 35,
-    y: 45
+    x: 60,
+    y: 40
   },
   {
     id: '2',
@@ -32,10 +32,10 @@ const hazardData: HazardIcon[] = [
     title: 'Temperature Warning',
     description: 'Cooling system temperature above normal range',
     severity: 'Medium',
-    location: 'Quality Control - Inspection Area',
+    location: 'Storage Tank Area',
     timestamp: '2024-01-15 14:15:00',
-    x: 65,
-    y: 35
+    x: 20,
+    y: 30
   },
   {
     id: '3',
@@ -43,10 +43,10 @@ const hazardData: HazardIcon[] = [
     title: 'Power Fluctuation',
     description: 'Voltage instability detected in main power line',
     severity: 'High',
-    location: 'Main Distribution Panel',
+    location: 'Control Room - Electrical Panel',
     timestamp: '2024-01-15 14:18:00',
-    x: 25,
-    y: 35
+    x: 80,
+    y: 45
   },
   {
     id: '4',
@@ -54,10 +54,10 @@ const hazardData: HazardIcon[] = [
     title: 'Scheduled Maintenance Due',
     description: 'Conveyor belt requires preventive maintenance',
     severity: 'Low',
-    location: 'Assembly Line 1 - Conveyor System',
+    location: 'Conveyor System - Transport Line',
     timestamp: '2024-01-15 14:10:00',
-    x: 50,
-    y: 55
+    x: 45,
+    y: 65
   }
 ];
 
@@ -106,7 +106,7 @@ const FactoryFloorVisualization = () => {
   return (
     <div className="relative">
       <img 
-        src="/lovable-uploads/91c26453-bc88-41fb-98cb-22f75c858976.png"
+        src="/lovable-uploads/f0e934c1-1268-4150-b392-e29128ce39e7.png"
         alt="Factory Floor 3D Visualization"
         className="w-full h-auto rounded-lg"
       />
