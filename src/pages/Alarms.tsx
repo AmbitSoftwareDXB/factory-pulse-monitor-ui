@@ -402,12 +402,10 @@ const Alarms = () => {
             </Button>
             <Select onValueChange={(value: 'csv' | 'xlsx' | 'pptx') => handleExportAlarms(value)}>
               <SelectTrigger className="w-32 bg-slate-900 border-slate-600 text-white">
-                <SelectValue placeholder={
-                  <div className="flex items-center">
-                    <Download className="w-4 h-4 mr-2" />
-                    Export
-                  </div>
-                } />
+                <div className="flex items-center">
+                  <Download className="w-4 h-4 mr-2" />
+                  <SelectValue placeholder="Export" />
+                </div>
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="csv">
