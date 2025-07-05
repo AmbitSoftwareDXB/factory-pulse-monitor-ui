@@ -7,8 +7,11 @@ import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { AlertTriangle, Clock, CheckCircle, XCircle, Search, Filter, Download } from 'lucide-react';
+import { AlertTriangle, Clock, CheckCircle, XCircle, Search, Filter, Download, FileDown } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
+import AlarmDetailsDialog from '@/components/alarms/AlarmDetailsDialog';
+import * as XLSX from 'xlsx';
+import PptxGenJS from 'pptxgenjs';
 
 interface Alarm {
   id: string;
@@ -105,10 +108,13 @@ const Alarms = () => {
   const [statusFilter, setStatusFilter] = useState<string>('all');
   const [categoryFilter, setCategoryFilter] = useState<string>('all');
   const [selectedAlarms, setSelectedAlarms] = useState<string[]>([]);
+  const [selectedAlarmForView, setSelectedAlarmForView] = useState<Alarm | null>(null);
+  const [dialogOpen, setDialogOpen] = useState(false);
+  const [alarms, setAlarms] = useState<Alarm[]>(mockAlarms);
   const { toast } = useToast();
 
   const filteredAlarms = useMemo(() => {
-    return mockAlarms.filter(alarm => {
+    return alarms.filter(alarm => {
       const matchesSearch = searchQuery === '' || 
         alarm.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
         alarm.machine.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -123,13 +129,13 @@ const Alarms = () => {
   }, [searchQuery, severityFilter, statusFilter, categoryFilter]);
 
   const alarmStats = useMemo(() => {
-    const active = mockAlarms.filter(a => a.status === 'Active').length;
-    const critical = mockAlarms.filter(a => a.severity === 'Critical').length;
-    const acknowledged = mockAlarms.filter(a => a.status === 'Acknowledged').length;
-    const resolved = mockAlarms.filter(a => a.status === 'Resolved').length;
+    const active = alarms.filter(a => a.status === 'Active').length;
+    const critical = alarms.filter(a => a.severity === 'Critical').length;
+    const acknowledged = alarms.filter(a => a.status === 'Acknowledged').length;
+    const resolved = alarms.filter(a => a.status === 'Resolved').length;
     
-    return { active, critical, acknowledged, resolved, total: mockAlarms.length };
-  }, []);
+    return { active, critical, acknowledged, resolved, total: alarms.length };
+  }, [alarms]);
 
   const getSeverityColor = (severity: string) => {
     switch (severity) {
@@ -150,6 +156,38 @@ const Alarms = () => {
     }
   };
 
+  const handleAcknowledge = (alarmId: string) => {
+    const currentTime = new Date().toLocaleString();
+    const userName = "Current User"; // In a real app, this would come from auth context
+    
+    setAlarms(prevAlarms => 
+      prevAlarms.map(alarm => 
+        alarm.id === alarmId 
+          ? { 
+              ...alarm, 
+              status: 'Acknowledged' as const,
+              acknowledgedBy: userName,
+              acknowledgedAt: currentTime
+            }
+          : alarm
+      )
+    );
+
+    toast({
+      title: "Alarm Acknowledged",
+      description: `Alarm ${alarmId} has been acknowledged.`,
+    });
+
+    if (selectedAlarmForView?.id === alarmId) {
+      setSelectedAlarmForView(prev => prev ? {
+        ...prev,
+        status: 'Acknowledged' as const,
+        acknowledgedBy: userName,
+        acknowledgedAt: currentTime
+      } : null);
+    }
+  };
+
   const handleBulkAcknowledge = () => {
     if (selectedAlarms.length === 0) {
       toast({
@@ -160,6 +198,22 @@ const Alarms = () => {
       return;
     }
 
+    const currentTime = new Date().toLocaleString();
+    const userName = "Current User";
+
+    setAlarms(prevAlarms => 
+      prevAlarms.map(alarm => 
+        selectedAlarms.includes(alarm.id) && alarm.status === 'Active'
+          ? { 
+              ...alarm, 
+              status: 'Acknowledged' as const,
+              acknowledgedBy: userName,
+              acknowledgedAt: currentTime
+            }
+          : alarm
+      )
+    );
+
     toast({
       title: "Alarms Acknowledged",
       description: `${selectedAlarms.length} alarm(s) have been acknowledged.`,
@@ -167,10 +221,162 @@ const Alarms = () => {
     setSelectedAlarms([]);
   };
 
-  const handleExportAlarms = () => {
+  const handleViewAlarm = (alarm: Alarm) => {
+    setSelectedAlarmForView(alarm);
+    setDialogOpen(true);
+  };
+
+  const exportToCSV = () => {
+    const csvData = filteredAlarms.map(alarm => ({
+      ID: alarm.id,
+      Title: alarm.title,
+      Description: alarm.description,
+      Severity: alarm.severity,
+      Status: alarm.status,
+      Machine: alarm.machine,
+      Location: alarm.location,
+      Category: alarm.category,
+      Timestamp: alarm.timestamp,
+      'Acknowledged By': alarm.acknowledgedBy || '',
+      'Acknowledged At': alarm.acknowledgedAt || ''
+    }));
+
+    const csv = [
+      Object.keys(csvData[0]).join(','),
+      ...csvData.map(row => Object.values(row).map(val => `"${val}"`).join(','))
+    ].join('\n');
+
+    const blob = new Blob([csv], { type: 'text/csv' });
+    const url = window.URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `alarms_export_${new Date().toISOString().split('T')[0]}.csv`;
+    a.click();
+    window.URL.revokeObjectURL(url);
+  };
+
+  const exportToXLSX = () => {
+    const wsData = filteredAlarms.map(alarm => ({
+      ID: alarm.id,
+      Title: alarm.title,
+      Description: alarm.description,
+      Severity: alarm.severity,
+      Status: alarm.status,
+      Machine: alarm.machine,
+      Location: alarm.location,
+      Category: alarm.category,
+      Timestamp: alarm.timestamp,
+      'Acknowledged By': alarm.acknowledgedBy || '',
+      'Acknowledged At': alarm.acknowledgedAt || ''
+    }));
+
+    const ws = XLSX.utils.json_to_sheet(wsData);
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, 'Alarms');
+    XLSX.writeFile(wb, `alarms_export_${new Date().toISOString().split('T')[0]}.xlsx`);
+  };
+
+  const exportToPowerPoint = () => {
+    const pptx = new PptxGenJS();
+    
+    // Title slide
+    const titleSlide = pptx.addSlide();
+    titleSlide.addText('Alarm Management Report', {
+      x: 1, y: 1, w: 8, h: 1.5, fontSize: 32, bold: true, color: '363636'
+    });
+    titleSlide.addText(`Generated on ${new Date().toLocaleDateString()}`, {
+      x: 1, y: 2.5, w: 8, h: 0.5, fontSize: 16, color: '666666'
+    });
+    titleSlide.addText(`Total Alarms: ${filteredAlarms.length}`, {
+      x: 1, y: 3.5, w: 8, h: 0.5, fontSize: 14, color: '666666'
+    });
+
+    // Summary slide
+    const summarySlide = pptx.addSlide();
+    summarySlide.addText('Alarm Summary', {
+      x: 1, y: 0.5, w: 8, h: 1, fontSize: 24, bold: true, color: '363636'
+    });
+    
+    const summaryTableData = [
+      [
+        { text: 'Status', options: { bold: true } },
+        { text: 'Count', options: { bold: true } }
+      ],
+      [
+        { text: 'Active', options: {} },
+        { text: alarmStats.active.toString(), options: {} }
+      ],
+      [
+        { text: 'Critical', options: {} },
+        { text: alarmStats.critical.toString(), options: {} }
+      ],
+      [
+        { text: 'Acknowledged', options: {} },
+        { text: alarmStats.acknowledged.toString(), options: {} }
+      ],
+      [
+        { text: 'Resolved', options: {} },
+        { text: alarmStats.resolved.toString(), options: {} }
+      ]
+    ];
+    
+    summarySlide.addTable(summaryTableData, {
+      x: 1, y: 2, w: 6, h: 3, fontSize: 14, border: {pt: 1, color: 'CFCFCF'}
+    });
+
+    // Detailed alarms (chunks of 8 per slide)
+    const chunkedAlarms = [];
+    for (let i = 0; i < filteredAlarms.length; i += 8) {
+      chunkedAlarms.push(filteredAlarms.slice(i, i + 8));
+    }
+
+    chunkedAlarms.forEach((chunk, index) => {
+      const detailSlide = pptx.addSlide();
+      detailSlide.addText(`Alarm Details (${index + 1}/${chunkedAlarms.length})`, {
+        x: 1, y: 0.5, w: 8, h: 0.8, fontSize: 20, bold: true, color: '363636'
+      });
+
+      const detailTableData = [
+        [
+          { text: 'ID', options: { bold: true } },
+          { text: 'Title', options: { bold: true } },
+          { text: 'Severity', options: { bold: true } },
+          { text: 'Status', options: { bold: true } },
+          { text: 'Machine', options: { bold: true } }
+        ],
+        ...chunk.map(alarm => [
+          { text: alarm.id, options: {} },
+          { text: alarm.title.substring(0, 30) + (alarm.title.length > 30 ? '...' : ''), options: {} },
+          { text: alarm.severity, options: {} },
+          { text: alarm.status, options: {} },
+          { text: alarm.machine, options: {} }
+        ])
+      ];
+
+      detailSlide.addTable(detailTableData, {
+        x: 0.5, y: 1.5, w: 9, h: 5, fontSize: 10, border: {pt: 1, color: 'CFCFCF'}
+      });
+    });
+
+    pptx.writeFile({ fileName: `alarms_report_${new Date().toISOString().split('T')[0]}.pptx` });
+  };
+
+  const handleExportAlarms = (format: 'csv' | 'xlsx' | 'pptx') => {
+    switch (format) {
+      case 'csv':
+        exportToCSV();
+        break;
+      case 'xlsx':
+        exportToXLSX();
+        break;
+      case 'pptx':
+        exportToPowerPoint();
+        break;
+    }
+
     toast({
-      title: "Export Started",
-      description: "Alarm data export has been initiated. Download will begin shortly.",
+      title: "Export Complete",
+      description: `Alarm data exported as ${format.toUpperCase()} successfully.`,
     });
   };
 
@@ -194,10 +400,36 @@ const Alarms = () => {
               <CheckCircle className="w-4 h-4 mr-2" />
               Acknowledge Selected
             </Button>
-            <Button onClick={handleExportAlarms} variant="outline" className="border-slate-600 text-slate-300">
-              <Download className="w-4 h-4 mr-2" />
-              Export
-            </Button>
+            <Select onValueChange={(value: 'csv' | 'xlsx' | 'pptx') => handleExportAlarms(value)}>
+              <SelectTrigger className="w-32 bg-slate-900 border-slate-600 text-white">
+                <SelectValue placeholder={
+                  <div className="flex items-center">
+                    <Download className="w-4 h-4 mr-2" />
+                    Export
+                  </div>
+                } />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="csv">
+                  <div className="flex items-center">
+                    <FileDown className="w-4 h-4 mr-2" />
+                    CSV
+                  </div>
+                </SelectItem>
+                <SelectItem value="xlsx">
+                  <div className="flex items-center">
+                    <FileDown className="w-4 h-4 mr-2" />
+                    Excel
+                  </div>
+                </SelectItem>
+                <SelectItem value="pptx">
+                  <div className="flex items-center">
+                    <FileDown className="w-4 h-4 mr-2" />
+                    PowerPoint
+                  </div>
+                </SelectItem>
+              </SelectContent>
+            </Select>
           </div>
         </div>
 
@@ -401,12 +633,21 @@ const Alarms = () => {
                       <TableCell>
                         <div className="flex space-x-2">
                           {alarm.status === 'Active' && (
-                            <Button size="sm" className="bg-yellow-600 hover:bg-yellow-700">
+                            <Button 
+                              size="sm" 
+                              onClick={() => handleAcknowledge(alarm.id)}
+                              className="bg-yellow-600 hover:bg-yellow-700"
+                            >
                               <CheckCircle className="w-3 h-3 mr-1" />
                               Ack
                             </Button>
                           )}
-                          <Button size="sm" variant="outline" className="border-slate-600 text-slate-300">
+                          <Button 
+                            size="sm" 
+                            variant="outline" 
+                            onClick={() => handleViewAlarm(alarm)}
+                            className="border-slate-600 text-slate-300"
+                          >
                             View
                           </Button>
                         </div>
@@ -418,6 +659,14 @@ const Alarms = () => {
             </div>
           </CardContent>
         </Card>
+
+        {/* Alarm Details Dialog */}
+        <AlarmDetailsDialog
+          alarm={selectedAlarmForView}
+          open={dialogOpen}
+          onOpenChange={setDialogOpen}
+          onAcknowledge={handleAcknowledge}
+        />
       </main>
     </div>
   );
