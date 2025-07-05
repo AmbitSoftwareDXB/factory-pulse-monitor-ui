@@ -10,69 +10,197 @@ interface KPIData {
   unit?: string;
 }
 
+const getKPIDataForFilter = (filter: string): KPIData[] => {
+  const baseData = {
+    'Today': [
+      {
+        title: 'Production Output',
+        value: '1,250',
+        trend: '+10%',
+        trendType: 'positive' as const,
+        unit: 'units'
+      },
+      {
+        title: 'Performance Efficiency',
+        value: '94.2',
+        trend: '+2.1%',
+        trendType: 'positive' as const,
+        unit: '%'
+      },
+      {
+        title: 'Active Alarms',
+        value: '3',
+        trend: '-2',
+        trendType: 'positive' as const,
+        unit: ''
+      },
+      {
+        title: 'Equipment Failure Rate',
+        value: '0.8',
+        trend: '-0.2%',
+        trendType: 'positive' as const,
+        unit: '%'
+      },
+      {
+        title: 'Labor Utilization',
+        value: '72.4%',
+        trend: '+3%',
+        trendDirection: 'up' as const
+      },
+      {
+        title: 'Energy Usage',
+        value: '284.7',
+        trend: '+5.2%',
+        trendType: 'negative' as const,
+        unit: 'kWh'
+      },
+      {
+        title: 'Defect Rate',
+        value: '0.05',
+        trend: '-0.01%',
+        trendType: 'positive' as const,
+        unit: '%'
+      },
+      {
+        title: 'Devices per Hour',
+        value: '156',
+        trend: '+8',
+        trendType: 'positive' as const,
+        unit: 'units/hr'
+      }
+    ],
+    'Last 7 Days': [
+      {
+        title: 'Production Output',
+        value: '8,400',
+        trend: '+5%',
+        trendType: 'positive' as const,
+        unit: 'units'
+      },
+      {
+        title: 'Performance Efficiency',
+        value: '91.8',
+        trend: '+1.2%',
+        trendType: 'positive' as const,
+        unit: '%'
+      },
+      {
+        title: 'Active Alarms',
+        value: '18',
+        trend: '+3',
+        trendType: 'negative' as const,
+        unit: ''
+      },
+      {
+        title: 'Equipment Failure Rate',
+        value: '1.2',
+        trend: '+0.1%',
+        trendType: 'negative' as const,
+        unit: '%'
+      },
+      {
+        title: 'Labor Utilization',
+        value: '74.1%',
+        trend: '+1.5%',
+        trendDirection: 'up' as const
+      },
+      {
+        title: 'Energy Usage',
+        value: '1,890',
+        trend: '+3.8%',
+        trendType: 'negative' as const,
+        unit: 'kWh'
+      },
+      {
+        title: 'Defect Rate',
+        value: '0.08',
+        trend: '+0.02%',
+        trendType: 'negative' as const,
+        unit: '%'
+      },
+      {
+        title: 'Devices per Hour',
+        value: '148',
+        trend: '+12',
+        trendType: 'positive' as const,
+        unit: 'units/hr'
+      }
+    ],
+    'Last 30 Days': [
+      {
+        title: 'Production Output',
+        value: '35,600',
+        trend: '+8%',
+        trendType: 'positive' as const,
+        unit: 'units'
+      },
+      {
+        title: 'Performance Efficiency',
+        value: '89.5',
+        trend: '-1.8%',
+        trendType: 'negative' as const,
+        unit: '%'
+      },
+      {
+        title: 'Active Alarms',
+        value: '67',
+        trend: '+12',
+        trendType: 'negative' as const,
+        unit: ''
+      },
+      {
+        title: 'Equipment Failure Rate',
+        value: '1.8',
+        trend: '+0.4%',
+        trendType: 'negative' as const,
+        unit: '%'
+      },
+      {
+        title: 'Labor Utilization',
+        value: '71.2%',
+        trend: '-2.1%',
+        trendDirection: 'down' as const
+      },
+      {
+        title: 'Energy Usage',
+        value: '8,140',
+        trend: '+7.2%',
+        trendType: 'negative' as const,
+        unit: 'kWh'
+      },
+      {
+        title: 'Defect Rate',
+        value: '0.12',
+        trend: '+0.03%',
+        trendType: 'negative' as const,
+        unit: '%'
+      },
+      {
+        title: 'Devices per Hour',
+        value: '142',
+        trend: '+18',
+        trendType: 'positive' as const,
+        unit: 'units/hr'
+      }
+    ]
+  };
+  
+  return baseData[filter as keyof typeof baseData] || baseData.Today;
+};
+
 export const useDashboardData = () => {
-  const [kpiData, setKpiData] = useState<KPIData[]>([
-    {
-      title: 'Production Output',
-      value: '1,250',
-      trend: '+10%',
-      trendType: 'positive',
-      unit: 'units'
-    },
-    {
-      title: 'Performance Efficiency',
-      value: '94.2',
-      trend: '+2.1%',
-      trendType: 'positive',
-      unit: '%'
-    },
-    {
-      title: 'Active Alarms',
-      value: '3',
-      trend: '-2',
-      trendType: 'positive',
-      unit: ''
-    },
-    {
-      title: 'Equipment Failure Rate',
-      value: '0.8',
-      trend: '-0.2%',
-      trendType: 'positive',
-      unit: '%'
-    },
-    {
-      title: 'Labor Utilization',
-      value: '72.4%',
-      trend: '+3%',
-      trendDirection: 'up'
-    },
-    {
-      title: 'Energy Usage',
-      value: '284.7',
-      trend: '+5.2%',
-      trendType: 'negative',
-      unit: 'kWh'
-    },
-    {
-      title: 'Defect Rate',
-      value: '0.05',
-      trend: '-0.01%',
-      trendType: 'positive',
-      unit: '%'
-    },
-    {
-      title: 'Devices per Hour',
-      value: '156',
-      trend: '+8',
-      trendType: 'positive',
-      unit: 'units/hr'
-    }
-  ]);
-
   const [activeFilter, setActiveFilter] = useState('Today');
+  const [kpiData, setKpiData] = useState<KPIData[]>(() => getKPIDataForFilter('Today'));
 
-  // Simulate real-time data updates
+  // Update data when filter changes
   useEffect(() => {
+    setKpiData(getKPIDataForFilter(activeFilter));
+  }, [activeFilter]);
+
+  // Simulate real-time data updates only for "Today"
+  useEffect(() => {
+    if (activeFilter !== 'Today') return;
+    
     const interval = setInterval(() => {
       setKpiData(prevData => 
         prevData.map(item => {
@@ -102,7 +230,7 @@ export const useDashboardData = () => {
     }, 5000); // Update every 5 seconds
 
     return () => clearInterval(interval);
-  }, []);
+  }, [activeFilter]);
 
   return {
     kpiData,
