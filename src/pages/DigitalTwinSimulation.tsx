@@ -10,6 +10,7 @@ import {
   Connection,
   Edge,
   Node,
+  MarkerType,
 } from '@xyflow/react';
 import '@xyflow/react/dist/style.css';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -152,7 +153,11 @@ const DigitalTwinSimulation = () => {
       target: '2',
       type: 'smoothstep',
       animated: true,
-      style: { stroke: '#10B981', strokeWidth: 3 }
+      style: { stroke: '#10B981', strokeWidth: 4 },
+      markerEnd: {
+        type: MarkerType.ArrowClosed,
+        color: '#10B981',
+      }
     },
     {
       id: 'e2-3',
@@ -160,7 +165,11 @@ const DigitalTwinSimulation = () => {
       target: '3', 
       type: 'smoothstep',
       animated: true,
-      style: { stroke: '#10B981', strokeWidth: 3 }
+      style: { stroke: '#10B981', strokeWidth: 4 },
+      markerEnd: {
+        type: MarkerType.ArrowClosed,
+        color: '#10B981',
+      }
     },
     {
       id: 'e3-4',
@@ -168,7 +177,11 @@ const DigitalTwinSimulation = () => {
       target: '4',
       type: 'smoothstep',
       animated: true, 
-      style: { stroke: '#10B981', strokeWidth: 3 }
+      style: { stroke: '#10B981', strokeWidth: 4 },
+      markerEnd: {
+        type: MarkerType.ArrowClosed,
+        color: '#10B981',
+      }
     },
     {
       id: 'e4-5',
@@ -176,14 +189,22 @@ const DigitalTwinSimulation = () => {
       target: '5',
       type: 'smoothstep',
       animated: true,
-      style: { stroke: '#F59E0B', strokeWidth: 3 }
+      style: { stroke: '#F59E0B', strokeWidth: 4 },
+      markerEnd: {
+        type: MarkerType.ArrowClosed,
+        color: '#F59E0B',
+      }
     },
     {
       id: 'e6-2',
       source: '6',
       target: '2',
       type: 'smoothstep',
-      style: { stroke: '#EF4444', strokeWidth: 2, strokeDasharray: '5,5' }
+      style: { stroke: '#EF4444', strokeWidth: 3, strokeDasharray: '8,4' },
+      markerEnd: {
+        type: MarkerType.ArrowClosed,
+        color: '#EF4444',
+      }
     },
   ];
 
