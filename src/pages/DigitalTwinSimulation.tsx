@@ -11,6 +11,8 @@ import {
   Edge,
   Node,
   MarkerType,
+  Handle,
+  Position,
 } from '@xyflow/react';
 import '@xyflow/react/dist/style.css';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -35,35 +37,43 @@ const MachineNode = ({ data }: { data: any }) => {
   };
 
   return (
-    <div className={`px-4 py-3 rounded-lg border-2 ${getStatusColor(data.status)} min-w-[120px]`}>
-      <div className="font-semibold text-sm text-gray-800">{data.label}</div>
-      <div className="text-xs text-gray-600 mt-1">
-        Throughput: {data.throughput || 0}/hr
+    <>
+      <Handle type="target" position={Position.Left} className="w-3 h-3 !bg-blue-600 !border-2 !border-white" />
+      <div className={`px-4 py-3 rounded-lg border-2 ${getStatusColor(data.status)} min-w-[120px]`}>
+        <div className="font-semibold text-sm text-gray-800">{data.label}</div>
+        <div className="text-xs text-gray-600 mt-1">
+          Throughput: {data.throughput || 0}/hr
+        </div>
+        <div className="text-xs text-gray-600">
+          Efficiency: {data.efficiency || 0}%
+        </div>
+        <Badge className="mt-2 text-xs" variant={data.status === 'running' ? 'default' : 'secondary'}>
+          {data.status}
+        </Badge>
       </div>
-      <div className="text-xs text-gray-600">
-        Efficiency: {data.efficiency || 0}%
-      </div>
-      <Badge className="mt-2 text-xs" variant={data.status === 'running' ? 'default' : 'secondary'}>
-        {data.status}
-      </Badge>
-    </div>
+      <Handle type="source" position={Position.Right} className="w-3 h-3 !bg-blue-600 !border-2 !border-white" />
+    </>
   );
 };
 
 const BufferNode = ({ data }: { data: any }) => {
   return (
-    <div className="px-3 py-2 rounded border-2 border-blue-500 bg-blue-50 min-w-[100px]">
-      <div className="font-semibold text-sm text-gray-800">{data.label}</div>
-      <div className="text-xs text-gray-600">
-        Capacity: {data.current || 0}/{data.max || 100}
+    <>
+      <Handle type="target" position={Position.Left} className="w-3 h-3 !bg-orange-600 !border-2 !border-white" />
+      <div className="px-3 py-2 rounded border-2 border-blue-500 bg-blue-50 min-w-[100px]">
+        <div className="font-semibold text-sm text-gray-800">{data.label}</div>
+        <div className="text-xs text-gray-600">
+          Capacity: {data.current || 0}/{data.max || 100}
+        </div>
+        <div className="w-full bg-gray-200 rounded-full h-2 mt-2">
+          <div 
+            className="bg-blue-600 h-2 rounded-full transition-all duration-300"
+            style={{ width: `${((data.current || 0) / (data.max || 100)) * 100}%` }}
+          ></div>
+        </div>
       </div>
-      <div className="w-full bg-gray-200 rounded-full h-2 mt-2">
-        <div 
-          className="bg-blue-600 h-2 rounded-full transition-all duration-300"
-          style={{ width: `${((data.current || 0) / (data.max || 100)) * 100}%` }}
-        ></div>
-      </div>
-    </div>
+      <Handle type="source" position={Position.Right} className="w-3 h-3 !bg-orange-600 !border-2 !border-white" />
+    </>
   );
 };
 
