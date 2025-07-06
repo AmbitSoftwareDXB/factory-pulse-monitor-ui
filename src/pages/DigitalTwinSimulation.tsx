@@ -234,8 +234,99 @@ const DigitalTwinSimulation = () => {
     energyConsumption: 284.7
   });
 
+  const applyScenarioToFlow = useCallback((scenarioName: string) => {
+    let updatedNodes = [...initialNodes];
+    let updatedEdges = [...initialEdges];
+
+    switch (scenarioName) {
+      case 'Current State':
+        // Default state - use initial configuration
+        break;
+        
+      case 'Optimized Flow':
+        // Improve machine efficiency and buffer sizes
+        updatedNodes = updatedNodes.map(node => {
+          if (node.id === '3') {
+            return { ...node, data: { ...node.data, status: 'running', throughput: 165, efficiency: 92 } };
+          }
+          if (node.id === '5') {
+            return { ...node, data: { ...node.data, status: 'running', throughput: 156, efficiency: 88 } };
+          }
+          if (node.id === '2') {
+            return { ...node, data: { ...node.data, current: 65, max: 120 } };
+          }
+          if (node.id === '4') {
+            return { ...node, data: { ...node.data, current: 95, max: 180 } };
+          }
+          return node;
+        });
+        // Add optimized flow edge
+        updatedEdges = updatedEdges.map(edge => {
+          if (edge.id === 'e4-5') {
+            return { ...edge, style: { stroke: '#10B981', strokeWidth: 3 } };
+          }
+          return edge;
+        });
+        break;
+        
+      case 'Backup Active':
+        // Activate backup press and add connection
+        updatedNodes = updatedNodes.map(node => {
+          if (node.id === '6') {
+            return { ...node, data: { ...node.data, status: 'running', throughput: 134, efficiency: 82 } };
+          }
+          if (node.id === '2') {
+            return { ...node, data: { ...node.data, current: 85, max: 100 } };
+          }
+          return node;
+        });
+        // Make backup connection active
+        updatedEdges = updatedEdges.map(edge => {
+          if (edge.id === 'e6-2') {
+            return { 
+              ...edge, 
+              animated: true,
+              style: { stroke: '#10B981', strokeWidth: 3 }
+            };
+          }
+          return edge;
+        });
+        break;
+        
+      case 'Maintenance Mode':
+        // Put Assembly Robot in maintenance
+        updatedNodes = updatedNodes.map(node => {
+          if (node.id === '3') {
+            return { ...node, data: { ...node.data, status: 'fault', throughput: 0, efficiency: 0 } };
+          }
+          if (node.id === '4') {
+            return { ...node, data: { ...node.data, current: 15, max: 150 } };
+          }
+          return node;
+        });
+        // Disable flow through Assembly Robot
+        updatedEdges = updatedEdges.map(edge => {
+          if (edge.id === 'e2-3' || edge.id === 'e3-4') {
+            return { 
+              ...edge, 
+              animated: false,
+              style: { stroke: '#EF4444', strokeWidth: 2, strokeDasharray: '5,5' }
+            };
+          }
+          return edge;
+        });
+        break;
+    }
+
+    setNodes(updatedNodes);
+    setEdges(updatedEdges);
+  }, [setNodes, setEdges]);
+
   const runSimulation = () => {
     setIsSimulating(true);
+    
+    // Apply scenario to flow diagram
+    applyScenarioToFlow(selectedScenario.name);
     
     // Simulate running for 3 seconds
     setTimeout(() => {
